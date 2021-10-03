@@ -117,8 +117,8 @@ function App(props) {
   const faucetTx = Transactor(localProvider, gasPrice)
 
   // 🏗 scaffold-eth is full of handy hooks like this one to get your balance:
-  // const yourLocalBalance = useBalance(localProvider, address);
-  // if(DEBUG) console.log("💵 yourLocalBalance",yourLocalBalance?formatEther(yourLocalBalance):"...")
+   const yourLocalBalance = useBalance(localProvider, address);
+   if(DEBUG) console.log("💵 yourLocalBalance",yourLocalBalance?formatEther(yourLocalBalance):"...")
 
   // Just plug in different 🛰 providers to get your balance on different chains:
   // const yourMainnetBalance = useBalance(mainnetProvider, address);
@@ -411,7 +411,7 @@ function App(props) {
             <div style={{padding:32}}>
               <Button type={"primary"} onClick={async ()=>{
                 // let price = await readContracts.MarsShotBots.price() ** you are already calling this above
-                tx( writeContracts.MarsShotBots.requestMint({value: priceToMint, from: address}) )
+                tx( writeContracts.MarsShotBots.requestMint({value: priceToMint, from: address}))
               }}>MINT for Ξ{priceToMint && (+ethers.utils.formatEther(priceToMint)).toFixed(4)}</Button>
 
               <div class="publicgoodsgood">
