@@ -4,20 +4,16 @@ import "antd/dist/antd.css";
 import {  JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import {  LinkOutlined } from "@ant-design/icons"
 import "./App.css";
-import { Row, Col, Button, Grid, Menu, Alert, Input, List, Card, Switch as SwitchD } from "antd";
+import { Row, Col, Button, Alert, Input, List, Card } from "antd";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useUserAddress } from "eth-hooks";
 import { useExchangePrice, useGasPrice, useUserProvider, useContractLoader, useContractReader, useEventListener, useBalance, useExternalContractLoader } from "./hooks";
-import { Header, Account, Faucet, Ramp, Contract, GasGauge, Address, AddressInput, ThemeSwitch } from "./components";
+import { Header, Account, Faucet, Ramp, Contract, GasGauge, Address, AddressInput } from "./components";
 import { Transactor } from "./helpers";
 import { formatEther, parseEther } from "@ethersproject/units";
 import { utils, ethers } from "ethers";
-//import Hints from "./Hints";
-import { Hints, ExampleUI, Subgraph } from "./views"
-import { useThemeSwitcher } from "react-css-theme-switcher";
-import { INFURA_ID, DAI_ADDRESS, DAI_ABI, NETWORK, NETWORKS } from "./constants";
-import StackGrid from "react-stack-grid";
+import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import ReactJson from 'react-json-view'
 import assets from './assets.js'
 
@@ -26,33 +22,13 @@ const { BufferList } = require('bl')
 const ipfsAPI = require('ipfs-http-client');
 const ipfs = ipfsAPI({host: 'ipfs.infura.io', port: '5001', protocol: 'https' })
 
-console.log("📦 Assets: ", assets)
-
-/*
-    Welcome to 🏗 scaffold-eth !
-
-    Code:
-    https://github.com/austintgriffith/scaffold-eth
-
-    Support:
-    https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA
-    or DM @austingriffith on twitter or telegram
-
-    You should get your own Infura.io ID and put it in `constants.js`
-    (this is your connection to the main Ethereum network for ENS etc.)
-
-
-    🌏 EXTERNAL CONTRACTS:
-    You can also bring in contract artifacts in `constants.js`
-    (and then use the `useExternalContractLoader()` hook!)
-*/
-
+// console.log("📦 Assets: ", assets)
 
 /// 📡 What chain are your contracts deployed to?
 const targetNetwork = NETWORKS['rinkeby']; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
-const DEBUG = true
+const DEBUG = false
 
 //EXAMPLE STARTING JSON:
 const STARTING_JSON = {
@@ -141,43 +117,42 @@ function App(props) {
   const faucetTx = Transactor(localProvider, gasPrice)
 
   // 🏗 scaffold-eth is full of handy hooks like this one to get your balance:
-  const yourLocalBalance = useBalance(localProvider, address);
-  if(DEBUG) console.log("💵 yourLocalBalance",yourLocalBalance?formatEther(yourLocalBalance):"...")
+  // const yourLocalBalance = useBalance(localProvider, address);
+  // if(DEBUG) console.log("💵 yourLocalBalance",yourLocalBalance?formatEther(yourLocalBalance):"...")
 
   // Just plug in different 🛰 providers to get your balance on different chains:
-  const yourMainnetBalance = useBalance(mainnetProvider, address);
-  if(DEBUG) console.log("💵 yourMainnetBalance",yourMainnetBalance?formatEther(yourMainnetBalance):"...")
+  // const yourMainnetBalance = useBalance(mainnetProvider, address);
+  // if(DEBUG) console.log("💵 yourMainnetBalance",yourMainnetBalance?formatEther(yourMainnetBalance):"...")
 
   // Load in your local 📝 contract and read a value from it:
   const readContracts = useContractLoader(localProvider)
-  if(DEBUG) console.log("📝 readContracts",readContracts)
+  if(DEBUG) console.log("📝 readContracts", readContracts)
 
   // If you want to make 🔐 write transactions to your contracts, use the userProvider:
   const writeContracts = useContractLoader(userProvider)
-  if(DEBUG) console.log("🔐 writeContracts",writeContracts)
+  if(DEBUG) console.log("🔐 writeContracts", writeContracts)
 
   // EXTERNAL CONTRACT EXAMPLE:
   //
   // If you want to bring in the mainnet DAI contract it would look like:
-  const mainnetDAIContract = useExternalContractLoader(mainnetProvider, DAI_ADDRESS, DAI_ABI)
-  console.log("🌍 DAI contract on mainnet:",mainnetDAIContract)
+  // const mainnetDAIContract = useExternalContractLoader(mainnetProvider, DAI_ADDRESS, DAI_ABI)
+  // console.log("🌍 DAI contract on mainnet:", mainnetDAIContract)
   //
   // Then read your DAI balance like:
-  const myMainnetDAIBalance = useContractReader({DAI: mainnetDAIContract},"DAI", "balanceOf",["0x34aA3F359A9D614239015126635CE7732c18fDF3"])
-  console.log("🥇 myMainnetDAIBalance:",myMainnetDAIBalance)
+  // const myMainnetDAIBalance = useContractReader({DAI: mainnetDAIContract},"DAI", "balanceOf",["0x34aA3F359A9D614239015126635CE7732c18fDF3"])
+  // console.log("🥇 myMainnetDAIBalance:", myMainnetDAIBalance)
 
 
   // keep track of a variable from the contract in the local React state:
-  const balance = useContractReader(readContracts,"MarsShotBots", "balanceOf", [ address ])
-  console.log("🤗 balance:",balance)
+  const balance = useContractReader(readContracts, "MarsShotBots", "balanceOf", [ address ])
+  console.log("🤗  balance: ", balance)
 
-  const priceToMint = useContractReader(readContracts,"MarsShotBots", "price")
-  console.log("🤗 priceToMint:",priceToMint)
-
+  const priceToMint = useContractReader(readContracts, "MarsShotBots", "price")
+  console.log("🤗  priceToMint: ", priceToMint)
 
   //📟 Listen for broadcast events
   const transferEvents = useEventListener(readContracts, "MarsShotBots", "Transfer", localProvider, 1);
-  console.log("📟 Transfer events:",transferEvents)
+  console.log("📟  Transfer events: ", transferEvents)
 
   //track the latest bots minted
   /* const [lastestMintedBots, setLatestMintedBots] = useState();
@@ -193,16 +168,16 @@ function App(props) {
   useEffect(()=>{
     const updateYourCollectibles = async () => {
       let collectibleUpdate = []
-      for(let tokenIndex=0;tokenIndex<balance;tokenIndex++){
+      for(let tokenIndex = 0; tokenIndex < balance; tokenIndex++){
         try{
-          console.log("GEtting token index",tokenIndex)
+          console.log("Getting token index",tokenIndex)
           const tokenId = await readContracts.MarsShotBots.tokenOfOwnerByIndex(address, tokenIndex)
-          console.log("tokenId",tokenId)
+          console.log("tokenId", tokenId)
           const tokenURI = await readContracts.MarsShotBots.tokenURI(tokenId)
-          console.log("tokenURI",tokenURI)
+          console.log("tokenURI", tokenURI)
 
           const ipfsHash =  tokenURI.replace("https://forgottenbots.mypinata.cloud/ipfs/","")
-          console.log("ipfsHash",ipfsHash)
+          console.log("ipfsHash", ipfsHash)
 
           const jsonManifestBuffer = await getFromIPFS(ipfsHash)
 
@@ -514,7 +489,7 @@ function App(props) {
             </div>
              }
     
-            {yourCollectibles && yourCollectibles.length>0 ?
+            {yourCollectibles && yourCollectibles.length > 0 ?
               <div></div>
               :
             <div class="colorme3">
