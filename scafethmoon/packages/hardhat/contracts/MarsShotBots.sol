@@ -643,9 +643,11 @@ contract MarsShotBots is ERC721 {
   {
     require(mintLimitForUsers[msg.sender] <= mintLimit, "Each address may only mint five bots");
     mintLimitForUsers[msg.sender] = mintLimitForUsers[msg.sender].add(1);
-    require(msg.value >= price, "NOT ENOUGH");
     
     price = (price * 1020) / 1000;
+    require(msg.value >= price, "NOT ENOUGH");
+    
+    
     (bool success,) = gitcoin.call{value:msg.value}("");
     require( success, "could not send");
     uint256 id = mintItem(msg.sender, uris[_tokenIds.current()]);

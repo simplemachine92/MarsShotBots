@@ -410,8 +410,8 @@ function App(props) {
             <h2>❤️🛠 Deployed on "x", after an extended rescue mission. </h2>
             <div style={{padding:32}}>
               <Button type={"primary"} onClick={async ()=>{
-                let price = await readContracts.MarsShotBots.price()
-                tx( writeContracts.MarsShotBots.requestMint(address,{value: price}) )
+                // let price = await readContracts.MarsShotBots.price() ** you are already calling this above
+                tx( writeContracts.MarsShotBots.requestMint({value: priceToMint, from: address}) )
               }}>MINT for Ξ{priceToMint && (+ethers.utils.formatEther(priceToMint)).toFixed(4)}</Button>
 
               <div class="publicgoodsgood">
