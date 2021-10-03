@@ -616,6 +616,8 @@ contract MarsShotBots is ERC721, Ownable {
 
   uint256 public constant limit = 594;
   uint256 public price = 0.0033 ether;
+  uint256 public constant mintLimit = 10;
+  mapping(address => uint256) public mintLimitForUser;
 
   function mintItem(address to, string memory tokenURI)
       private
@@ -635,8 +637,10 @@ contract MarsShotBots is ERC721, Ownable {
       public
       payable
   {
-    require( msg.value >= price, "NOT ENOUGH");
-    require(balanceOf(msg.sender) <= 5, 'Each address may only mint five bots');
+    require(mintLimitForUser[msg.sender] <= mintLimit, "Each address may only mint five bots");
+    mintLimitForUser[msg.sender] = mintLimitForUser[msg.sender].add(1);
+    require(msg.value >= price, "NOT ENOUGH");
+    // require(balanceOf(msg.sender) <= 5, 'Each address may only mint five bots');
     price = (price * 1020) / 1000;
     (bool success,) = gitcoin.call{value:msg.value}("");
     require( success, "could not send");
